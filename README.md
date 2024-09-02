@@ -11,8 +11,8 @@
     pip install PyRQA  
 #### tensorflow for CNN model 
     pip install tensorflow 
-    pip install pillow 
 #### PIL for loading recurrence plot as digital data 
+    pip install pillow 
 #### seaborn for heat map (not a core package, only for grid search) 
     pip install seaborn 
 ## B. Program Introduction 
