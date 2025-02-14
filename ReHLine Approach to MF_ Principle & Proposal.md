@@ -1,87 +1,102 @@
 ## **Principle**
+
 ### **1. Target**
-Given $Y$ and $r$, train $P \& Q$ such that $\hat{Y} = PQ^T+A+B+\mu J_{nm}$ can be used to fill NA values(or $0$) in $Y$, where:
+Given \( Y \) and \( r \), train \( P \& Q \) such that 
+\[
+\hat{Y} = PQ^T + A + B + \mu J_{nm}
+\]
+can be used to fill NA values (or \( 0 \)) in \( Y \), where:
 
-
-- $
+- 
+\[
 Y = \begin{pmatrix}
-y_{11}& y_{12} & y_{13} & \cdots &y_{1m} \\
-y_{21}& y_{22} & y_{23} & \cdots &y_{2m} \\
+y_{11} & y_{12} & y_{13} & \cdots & y_{1m} \\
+y_{21} & y_{22} & y_{23} & \cdots & y_{2m} \\
 \vdots & \vdots & \vdots & & \vdots \\
-y_{n1}& y_{n2} & y_{n3} & \cdots &y_{nm}
-\end{pmatrix}$ is input matrix 
-<br>
+y_{n1} & y_{n2} & y_{n3} & \cdots & y_{nm}
+\end{pmatrix}
+\]
+is the input matrix.
 
-
--  $
+- 
+\[
 P = \begin{pmatrix}
-p_{11}& p_{12} & \cdots &p_{1r} \\
-p_{21}& p_{22} & \cdots &p_{2r} \\
+p_{11} & p_{12} & \cdots & p_{1r} \\
+p_{21} & p_{22} & \cdots & p_{2r} \\
 \vdots & \vdots & \vdots &  \vdots \\
-p_{n1}& p_{n2} & \cdots &p_{nr} \\
-\end{pmatrix}$ and $
+p_{n1} & p_{n2} & \cdots & p_{nr}
+\end{pmatrix}
+\]
+and 
+\[
 Q = \begin{pmatrix}
-q_{11}& q_{12} & \cdots &q_{1r} \\
-q_{21}& q_{22} & \cdots &q_{2r} \\
+q_{11} & q_{12} & \cdots & q_{1r} \\
+q_{21} & q_{22} & \cdots & q_{2r} \\
 \vdots & \vdots & \vdots &  \vdots \\
-q_{m1}& q_{m2} & \cdots &q_{mr} \\
-\end{pmatrix}$ are factor matrices
-<br>
+q_{m1} & q_{m2} & \cdots & q_{mr}
+\end{pmatrix}
+\]
+are factor matrices.
 
-- $
+- 
+\[
 A = \begin{pmatrix}
-a_{1}& a_{1} & a_{1} & \cdots &a_{1} \\
-a_{2}& a_{2} & a_{2} & \cdots &a_{2}  \\
+a_{1} & a_{1} & a_{1} & \cdots & a_{1} \\
+a_{2} & a_{2} & a_{2} & \cdots & a_{2} \\
 \vdots & \vdots & \vdots & & \vdots \\
-a_{n}& a_{n} & a_{n} & \cdots &a_{n} 
-\end{pmatrix}$ and $B = \begin{pmatrix}
-b_{1}& b_{2} & b_{3} & \cdots &b_{m} \\
-b_{1}& b_{2} & b_{3} & \cdots &b_{m}  \\
+a_{n} & a_{n} & a_{n} & \cdots & a_{n}
+\end{pmatrix}
+\]
+and 
+\[
+B = \begin{pmatrix}
+b_{1} & b_{2} & b_{3} & \cdots & b_{m} \\
+b_{1} & b_{2} & b_{3} & \cdots & b_{m} \\
 \vdots & \vdots & \vdots & & \vdots \\
-b_{1}& b_{2} & b_{3} & \cdots &b_{m} 
-\end{pmatrix}$ are bias matrices
-<br>
+b_{1} & b_{2} & b_{3} & \cdots & b_{m}
+\end{pmatrix}
+\]
+are bias matrices.
 
--  $\mu$ is global bias
-<br>
+- \( \mu \) is the global bias.
 
--  $r$ is rank of matrix factorization
-<br>
-
-
+- \( r \) is the rank of matrix factorization.
 
 ### **2. Training Algorithm**
-####  $P \text- Q$ Circle: Blockwise Coordinate Descent
-- Fix $Q$ to update $P$:
-  For each $k$ from $1$ to $n$:
-  -  Objective function is:
-    $$
-     Obj( P_{[k,:]}) = L[\ (Y_{[k,:]})^T\ \ , \ \  Q  (P_{[k,:]})^T\ ] + A + B + \mu \cdot J_{nm}
-    $$
+
+####  \( P \text{-} Q \) Circle: Blockwise Coordinate Descent
+
+- Fix \( Q \) to update \( P \):
+  For each \( k \) from \( 1 \) to \( n \):
+  -  The objective function is:
+    \[
+    Obj( P_{[k,:]}) = L[(Y_{[k,:]})^T, Q (P_{[k,:]})^T] + A + B + \mu \cdot J_{nm}
+    \]
 
   - Use `ReHLine` to update:
-    $$
-    P^*_{[k,:]} = [\argmin_{p_k\in\mathbb{R}^r} Obj(p_k)]^T
-    $$
-	i.e. the k-th row of $P$
+    \[
+    P^*_{[k,:]} = [\arg\min_{p_k\in\mathbb{R}^r} Obj(p_k)]^T
+    \]
+    i.e. the \( k \)-th row of \( P \).
+
 <br>
 
-- Fix $P$ to update $Q$:
-
-  For each $h$ from $1$ to $m$:
-  -  Objective function is:
-    $$
-     Obj( Q_{[h,:]}) = L[\ Y_{[:,h]}\ \ , \ \  P  (Q_{[h,:]})^T\ ] + A + B + \mu \cdot J_{nm}
-    $$
+- Fix \( P \) to update \( Q \):
+  For each \( h \) from \( 1 \) to \( m \):
+  -  The objective function is:
+    \[
+    Obj( Q_{[h,:]}) = L[Y_{[:,h]}, P (Q_{[h,:]})^T] + A + B + \mu \cdot J_{nm}
+    \]
   - Use `ReHLine` to update:
-    $$
-    Q^*_{[h,:]} = [\argmin_{q_h\in\mathbb{R}^r} Obj(q_h)]^T
-    $$
-	i.e. the h-th row of $Q$
+    \[
+    Q^*_{[h,:]} = [\arg\min_{q_h\in\mathbb{R}^r} Obj(q_h)]^T
+    \]
+    i.e. the \( h \)-th row of \( Q \).
 
 ---
 
 ## **Proposal**
+
 ### **1. Class Specification**
 ```python
 class reline.mfL(loss, constrain=[], C=1.0,
